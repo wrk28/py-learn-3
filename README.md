@@ -41,9 +41,9 @@ options:
 python3 reserve.py
 ```
 
-Загрузить фото из профайла и альбома с идентификатором 0000001 на Yandex Disk и Google Drive
+Загрузить 8 фото из профайла и альбома с идентификатором 0000001 на Yandex Disk и Google Drive
 ```
-python3 reserve.py -n 10 -a profile 0000001 -c yandex google
+python3 reserve.py -n 8 -a profile 0000001 -c yandex google
 ```
 
 Файлы из профайла загружаются всегда, даже если явно не указывать.
