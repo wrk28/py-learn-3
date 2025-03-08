@@ -1,7 +1,8 @@
 # Примечание
 
 1. Для работы программы заполните конфигурационный файл .env
-   ```
+   
+```
 VK_ID=<Add your user_id here>
 VK_TOKEN=<Add your token here>
 VK_API_VERSION=5.199
@@ -10,7 +11,7 @@ GOOGLE_TOKEN=0
 FOLDER_NAME="Stored_Data"
 JSON_NAME="report.txt"
 STORE_JSON_TO_CLOUD=True
-   ```
+```
 2. Программа может запускаться с консоли с аргументами
 ```
 reserve.py -h
