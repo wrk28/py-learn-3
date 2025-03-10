@@ -129,6 +129,7 @@ class DataCopier:
     def __process_response(self, items):
         """Getting only sufficient data in a required form"""
         photos = []
+        name_count = {}
         for photo in items:
             id = photo['id']
             album_id = photo['album_id']
@@ -137,16 +138,12 @@ class DataCopier:
             size = f'{photo['orig_photo']['width']}x{photo['orig_photo']['height']}'
             date = photo['date']
             photos.append({'name': name, 'id': id, 'album_id': album_id, 'size': size, 'url': url, 'date': date})
-        
-        # Add date to the name of photos which repeat
-        name_count = {}
-        for photo in photos:
-            name = photo['name']
             if name in name_count:
                  name_count[name] += 1
             else:
                 name_count[name] = 1
-
+                
+        # Add date to the name of photos which repeat
         for photo in photos:
             name = photo['name']
             if name_count[name] > 1:
@@ -238,7 +235,3 @@ if __name__ == "__main__":
     except NameError:
         print('Access error')
         raise
-
-
-
-
