@@ -15,9 +15,9 @@ class ConsoleParamsReader:
         """Initialize a new console params reader"""
         self.album = []
         self.cloud = []
-        self.get_args()
+        self.__get_args()
        
-    def get_args(self):
+    def __get_args(self):
         """Storing the parameters as the object's fields"""
         arg_parser = argparse.ArgumentParser()
 
