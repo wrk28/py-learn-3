@@ -6,7 +6,6 @@ import argparse
 import json
 import requests
 from datetime import datetime
-from pprint import pprint
 
 
 class ConsoleParamsReader:
@@ -122,7 +121,6 @@ class DataCopier:
             params = self.vk_common_params.copy()
             params.update({'count': self.count, 'album_id': {album}, 'extended': 1}) 
             response = requests.get(url, params)
-            pprint(response.json())
             if 'error' in response.json():
                 raise NameError('Access to VK is denied') 
             items.extend(response.json()['response']['items'])
