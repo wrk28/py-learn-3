@@ -6,6 +6,7 @@ import argparse
 import json
 import requests
 from datetime import datetime
+from pprint import pprint
 
 
 class ConsoleParamsReader:
@@ -78,8 +79,8 @@ class DataCopier:
         self.stored_json_to_cloud = store_json_to_cloud
         self.count = count
         self.file_name = []
-        self.__vk_api = r'https://api.vk.com/method/'
-        self.__yandex_api = r'https://cloud-api.yandex.net/'
+        self.vk_api = r'https://api.vk.com/method/'
+        self.yandex_api = r'https://cloud-api.yandex.net/'
         self.albums = set(['profile'] + album[0])
         self.clouds = set(cloud[0])
 
@@ -114,13 +115,14 @@ class DataCopier:
 
     def __get_list_photos_to_download(self):
         """Get list of photos to download"""
-        url = f'{self.__vk_api}photos.get'
+        url = f'{self.vk_api}photos.get'
         albums = self.__get_album_list()
         items = []
         for album in albums:
             params = self.vk_common_params.copy()
             params.update({'count': self.count, 'album_id': {album}, 'extended': 1}) 
             response = requests.get(url, params)
+            pprint(response.json())
             if 'error' in response.json():
                 raise NameError('Access to VK is denied') 
             items.extend(response.json()['response']['items'])
@@ -133,7 +135,7 @@ class DataCopier:
         for photo in items:
             id = photo['id']
             album_id = photo['album_id']
-            url = photo['orig_photo']['url']
+            url = self.__get_photo_url(photo['sizes'])
             name = f'{photo['likes']['count']}'
             size = f'{photo['orig_photo']['width']}x{photo['orig_photo']['height']}'
             date = photo['date']
@@ -154,9 +156,14 @@ class DataCopier:
                 photo['name'] = f'{photo['name']}.jpg'
         return photos
     
+    def __get_photo_url(self, sizes: list):
+        func = lambda photo: photo['height']*photo['width']
+        photo = max(sizes, key=func)
+        return photo['url']
+    
     def __create_yandex_folder(self):
         """Create a folder in Yandex disk to upload the files"""
-        url = f'{self.__yandex_api}v1/disk/resources/'
+        url = f'{self.yandex_api}v1/disk/resources/'
         headers = {'Authorization': f'OAuth {self.yandex_token}'}
         time_str = datetime.now().strftime('%Y%m%d_%H%M%S')
         self.folder_name = f'{self.folder_name_pattern}_{time_str}'
@@ -168,7 +175,7 @@ class DataCopier:
     def yandex_upload(self):
         """Upload the photos to Yandex cloud"""
         self.__create_yandex_folder()
-        url = f'{self.__yandex_api}v1/disk/resources/upload'
+        url = f'{self.yandex_api}v1/disk/resources/upload'
         headers = {'Authorization': f'OAuth {self.yandex_token}'}
         progress_bar = progress.bar.IncrementalBar('Uploading to Yandex disk:', max=len(self.file_name))
         for file in self.file_name:                
@@ -186,7 +193,7 @@ class DataCopier:
         progress_bar.finish()
 
     def __store_report_file_to_yandex_disk(self):
-        url = f'{self.__yandex_api}v1/disk/resources/upload'
+        url = f'{self.yandex_api}v1/disk/resources/upload'
         headers = {'Authorization': f'OAuth {self.yandex_token}'}
         params = {'path': f'{self.folder_name}/{self.json_name}'}
         response = requests.get(url, headers=headers, params=params)
