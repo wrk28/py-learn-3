@@ -113,7 +113,7 @@ class DataCopier:
         with open(data_copier.json_name, 'w') as f:
             json.dump(photos_report, f)
 
-    def __get_list_photos_to_download(self):
+    def __get_list_photos_to_download(self) -> list:
         """Get list of photos to download"""
         url = f'{self.vk_api}photos.get'
         albums = self.__get_album_list()
@@ -128,7 +128,7 @@ class DataCopier:
             items.extend(response.json()['response']['items'])
         return self.__process_response(items)
 
-    def __process_response(self, items):
+    def __process_response(self, items: list) -> list:
         """Getting only sufficient data in a required form"""
         photos = []
         name_count = {}
