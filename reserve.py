@@ -143,9 +143,17 @@ class DataCopier:
             if name in name_count:
                  name_count[name] += 1
             else:
-                name_count[name] = 1
-                
-        # Add date to the name of photos which repeat
+                name_count[name] = 1          
+        return self.__change_repeated_photos(photos, name_count)
+    
+    def __get_photo_url(self, sizes: list) -> str:
+        """Finding the url of the photo"""
+        func = lambda photo: photo['height']*photo['width']
+        photo = max(sizes, key=func)
+        return photo['url']
+    
+    def __change_repeated_photos(self, photos: list, name_count: dict) -> list:
+        """Adding date to the name of photos which repeat"""
         for photo in photos:
             name = photo['name']
             if name_count[name] > 1:
@@ -155,11 +163,6 @@ class DataCopier:
             else:
                 photo['name'] = f'{photo['name']}.jpg'
         return photos
-    
-    def __get_photo_url(self, sizes: list):
-        func = lambda photo: photo['height']*photo['width']
-        photo = max(sizes, key=func)
-        return photo['url']
     
     def __create_yandex_folder(self):
         """Create a folder in Yandex disk to upload the files"""
