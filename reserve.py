@@ -83,7 +83,7 @@ class DataCopier:
         self.albums = set(['profile'] + album[0])
         self.clouds = set(cloud[0])
 
-    def __get_album_list(self):
+    def __get_album_list(self) -> set:
         """Getting the list of album id from where need to download the photos"""
         # We can add a method to get photos from albums by album names
         # For now it searches only by album id
@@ -133,9 +133,8 @@ class DataCopier:
         for photo in items:
             id = photo['id']
             album_id = photo['album_id']
-            url = self.__get_photo_url(photo['sizes'])
+            url, size = self.__get_photo_url(photo['sizes'])
             name = f'{photo['likes']['count']}'
-            size = f'{photo['orig_photo']['width']}x{photo['orig_photo']['height']}'
             date = photo['date']
             photos.append({'name': name, 'id': id, 'album_id': album_id, 'size': size, 'url': url, 'date': date})
             if name in name_count:
@@ -144,11 +143,13 @@ class DataCopier:
                 name_count[name] = 1          
         return self.__change_repeated_photos(photos, name_count)
     
-    def __get_photo_url(self, sizes: list) -> str:
+    def __get_photo_url(self, sizes: list) -> list[str, str]:
         """Finding the url of the photo"""
         func = lambda photo: photo['height']*photo['width']
         photo = max(sizes, key=func)
-        return photo['url']
+        url = photo['url']
+        size = f'{photo['width']}x{photo['height']}'
+        return url, size
     
     def __change_repeated_photos(self, photos: list, name_count: dict) -> list:
         """Adding date to the name of photos which repeat"""
