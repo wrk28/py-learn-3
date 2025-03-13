@@ -145,7 +145,7 @@ class DataCopier:
     
     def __get_photo_url(self, sizes: list) -> list[str, str]:
         """Finding the url of the photo"""
-        func = lambda photo: photo['height']*photo['width']
+        func = lambda photo: photo['height'] * photo['width']
         photo = max(sizes, key=func)
         url = photo['url']
         size = f'{photo['width']}x{photo['height']}'
